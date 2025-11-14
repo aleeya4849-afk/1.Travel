@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Roads | Discover the Roads Less Traveled</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sand: #E9D8A6;
+            --sky-blue: #94D2BD;
+            --earth-green: #0A7E8C;
+            --deep-brown: #5E4B3C;
+            --warm-orange: #EE9B00;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            overflow-x: hidden;
+        }
+        
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .zoom-in {
+            transition: transform 0.5s ease;
+        }
+        
+        .zoom-in:hover {
+            transform: scale(1.05);
+        }
+        
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .masonry-grid {
+            column-count: 3;
+            column-gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .masonry-grid {
+                column-count: 2;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .masonry-grid {
+                column-count: 1;
+            }
+        }
+        
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+        
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0A7E8C;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .compass {
+            width: 80px;
+            height: 80px;
+            border: 4px solid #E9D8A6;
+            border-radius: 50%;
+            position: relative;
+            animation: spin 2s linear infinite;
+        }
+        
+        .compass::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: #E9D8A6;
+            border-radius: 50%;
+        }
+        
+        .compass::after {
+            content: 'N';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #E9D8A6;
+            font-weight: bold;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 1000px;
+            animation: float 30s infinite linear;
+        }
+        
+        .cloud:nth-child(1) {
+            width: 200px;
+            height: 60px;
+            top: 20%;
+            opacity: 0.8;
+            animation-duration: 35s;
+        }
+        
+        .cloud:nth-child(2) {
+            width: 150px;
+            height: 40px;
+            top: 40%;
+            opacity: 0.6;
+            animation-duration: 25s;
+            animation-delay: 5s;
+        }
+        
+        .cloud:nth-child(3) {
+            width: 180px;
+            height: 50px;
+            top: 60%;
+            opacity: 0.7;
+            animation-duration: 40s;
+            animation-delay: 10s;
+        }
+        
+        @keyframes float {
+            from {
+                left: -200px;
+            }
+            to {
+                left: 100%;
+            }
+        }
+        
+        .bird {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: transparent;
+            animation: fly 20s infinite linear;
+        }
+        
+        .bird::before, .bird::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 10px solid #5E4B3C;
+        }
+        
+        .bird::before {
+            top: 0;
+            left: 0;
+        }
+        
+        .bird::after {
+            top: 0;
+            right: 0;
+            transform: scaleX(-1);
+        }
+        
+        @keyframes fly {
+            from {
+                left: -50px;
+            }
+            to {
+                left: 100%;
+            }
+        }
+        
+        .glow-button {
+            background: linear-gradient(45deg, #EE9B00, #E9D8A6);
+            box-shadow: 0 0 15px rgba(238, 155, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .glow-button:hover {
+            box-shadow: 0 0 25px rgba(238, 155, 0, 0.8);
+            transform: translateY(-3px);
+        }
+        
+        .destination-card {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .destination-card:hover .destination-image {
+            transform: scale(1.1);
+        }
+        
+        .destination-image {
+            transition: transform 0.5s ease;
+        }
+        
+        .chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #0A7E8C;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .chatbot:hover {
+            transform: scale(1.1);
+        }
+        
+        .chatbot-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chatbot-header {
+            background: #0A7E8C;
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+        }
+        
+        .bot-message {
+            background: #f1f1f1;
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background: #0A7E8C;
+            color: white;
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+        }
+        
+        .chatbot-input button {
+            background: #0A7E8C;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .surprise-button {
+            background: linear-gradient(45deg, #EE9B00, #E9D8A6);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(238, 155, 0, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(238, 155, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(238, 155, 0, 0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#f8f9fa]">
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="compass"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold text-[#0A7E8C]">Hidden Roads</h1>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#destinations" class="text-[#5E4B3C] hover:text-[#0A7E8C] transition-colors">Destinations</a>
+                <a href="#itinerary" class="text-[#5E4B3C] hover:text-[#0A7E8C] transition-colors">AI Itinerary</a>
+                <a href="#stories" class="text-[#5E4B3C] hover:text-[#0A7E8C] transition-colors">Travel Stories</a>
+                <a href="#gallery" class="text-[#5E4B3C] hover:text-[#0A7E8C] transition-colors">Gallery</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="bg-[#0A7E8C] text-white px-4 py-2 rounded-full hover:bg-[#0a6c78] transition-colors">Sign In</button>
+                <button class="md:hidden text-[#5E4B3C]">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0A7E8C]/80 to-[#94D2BD]/80 z-10"></div>
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80" alt="Mountain landscape" class="w-full h-full object-cover">
+        </div>
+        
+        <!-- Animated elements -->
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="bird" style="top: 25%; animation-delay: 2s;"></div>
+        <div class="bird" style="top: 45%; animation-delay: 7s;"></div>
+        <div class="bird" style="top: 65%; animation-delay: 12s;"></div>
+        
+        <div class="relative z-20 text-center text-white px-4 max-w-4xl">
+            <h2 class="text-4xl md:text-6xl font-bold mb-6 fade-in">Discover the Roads Less Traveled</h2>
+            <p class="text-xl md:text-2xl mb-10 fade-in">Explore hidden gems and untouched destinations around the world</p>
+            <button class="glow-button text-lg font-semibold px-8 py-4 rounded-full text-[#5E4B3C] fade-in">
+                Start Exploring
+            </button>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20">
+            <div class="animate-bounce text-white text-2xl">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinations Section -->
+    <section id="destinations" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#0A7E8C] mb-4 fade-in">Hidden Destinations</h2>
+            <p class="text-center text-[#5E4B3C] max-w-2xl mx-auto mb-12 fade-in">Discover breathtaking places that remain off the beaten path</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Destination Card 1 -->
+                <div class="destination-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Faroe Islands" class="w-full h-full object-cover destination-image">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-[#0A7E8C] mb-2">Faroe Islands</h3>
+                        <p class="text-[#5E4B3C] mb-4">A remote archipelago with dramatic cliffs, waterfalls, and quaint villages.</p>
+                        <button class="bg-[#EE9B00] text-white px-4 py-2 rounded-full hover:bg-[#d48c00] transition-colors">Explore</button>
+                    </div>
+                </div>
+                
+                <!-- Destination Card 2 -->
+                <div class="destination-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Zhangjiajie National Forest" class="w-full h-full object-cover destination-image">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-[#0A7E8C] mb-2">Zhangjiajie, China</h3>
+                        <p class="text-[#5E4B3C] mb-4">Towering sandstone pillars that inspired the floating mountains in Avatar.</p>
+                        <button class="bg-[#EE9B00] text-white px-4 py-2 rounded-full hover:bg-[#d48c00] transition-colors">Explore</button>
+                    </div>
+                </div>
+                
+                <!-- Destination Card 3 -->
+                <div class="destination-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Salar de Uyuni" class="w-full h-full object-cover destination-image">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-[#0A7E8C] mb-2">Salar de Uyuni, Bolivia</h3>
+                        <p class="text-[#5E4B3C] mb-4">The world's largest salt flat creating a surreal mirror effect when wet.</p>
+                        <button class="bg-[#EE9B00] text-white px-4 py-2 rounded-full hover:bg-[#d48c00] transition-colors">Explore</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="bg-[#0A7E8C] text-white px-6 py-3 rounded-full hover:bg-[#0a6c78] transition-colors">View All Destinations</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Itinerary Generator -->
+    <section id="itinerary" class="py-20 bg-[#f8f9fa]">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#0A7E8C] mb-4 fade-in">AI Itinerary Generator</h2>
+            <p class="text-center text-[#5E4B3C] max-w-2xl mx-auto mb-12 fade-in">Let our AI create a personalized travel plan based on your preferences</p>
+            
+            <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 fade-in">
+                <form id="itinerary-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[#5E4B3C] mb-2">Travel Duration</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0A7E8C]">
+                            <option>3-5 days</option>
+                            <option>1 week</option>
+                            <option>2 weeks</option>
+                            <option>1 month+</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[#5E4B3C] mb-2">Interests</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0A7E8C]">
+                            <option>Adventure & Nature</option>
+                            <option>Culture & History</option>
+                            <option>Relaxation & Wellness</option>
+                            <option>Food & Culinary</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[#5E4B3C] mb-2">Continent</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0A7E8C]">
+                            <option>Europe</option>
+                            <option>Asia</option>
+                            <option>Africa</option>
+                            <option>North America</option>
+                            <option>South America</option>
+                            <option>Oceania</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[#5E4B3C] mb-2">Budget</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0A7E8C]">
+                            <option>Budget</option>
+                            <option>Moderate</option>
+                            <option>Luxury</option>
+                        </select>
+                    </div>
+                </form>
+                
+                <div class="mt-8 text-center">
+                    <button class="bg-[#EE9B00] text-white px-8 py-3 rounded-full hover:bg-[#d48c00] transition-colors">Generate Itinerary</button>
+                </div>
+                
+                <!-- Surprise Me Button -->
+                <div class="mt-6 text-center">
+                    <button class="surprise-button text-white px-6 py-2 rounded-full">Surprise Me!</button>
+                </div>
+            </div>
+            
+            <!-- Itinerary Results -->
+            <div id="itinerary-results" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Results will appear here after form submission -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Travel Stories Blog -->
+    <section id="stories" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#0A7E8C] mb-4 fade-in">Travel Stories</h2>
+            <p class="text-center text-[#5E4B3C] max-w-2xl mx-auto mb-12 fade-in">Inspiring tales from fellow explorers who've taken the road less traveled</p>
+            
+            <div class="space-y-12">
+                <!-- Story 1 -->
+                <div class="flex flex-col md:flex-row items-center gap-8 slide-in-left">
+                    <div class="md:w-1/2">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Hiking in mountains" class="w-full h-80 object-cover rounded-2xl shadow-lg">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold text-[#0A7E8C] mb-4">Lost in the Himalayas: A Solo Journey</h3>
+                        <p class="text-[#5E4B3C] mb-4">When Sarah decided to trek through the remote regions of Nepal, she discovered more than just breathtaking landscapes...</p>
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-[#E9D8A6] rounded-full flex items-center justify-center text-[#5E4B3C] font-bold mr-3">S</div>
+                            <div>
+                                <p class="font-semibold text-[#5E4B3C]">Sarah Johnson</p>
+                                <p class="text-sm text-gray-500">Traveler & Photographer</p>
+                            </div>
+                        </div>
+                        <button class="text-[#0A7E8C] font-semibold hover:text-[#0a6c78] transition-colors">Read Full Story →</button>
+                    </div>
+                </div>
+                
+                <!-- Story 2 -->
+                <div class="flex flex-col md:flex-row-reverse items-center gap-8 slide-in-right">
+                    <div class="md:w-1/2">
+                        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Desert landscape" class="w-full h-80 object-cover rounded-2xl shadow-lg">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold text-[#0A7E8C] mb-4">Finding Oasis: 30 Days in the Sahara</h3>
+                        <p class="text-[#5E4B3C] mb-4">Mark's journey across the world's largest hot desert taught him about resilience, nomadic cultures, and the beauty of emptiness...</p>
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-[#94D2BD] rounded-full flex items-center justify-center text-[#5E4B3C] font-bold mr-3">M</div>
+                            <div>
+                                <p class="font-semibold text-[#5E4B3C]">Mark Rodriguez</p>
+                                <p class="text-sm text-gray-500">Adventure Blogger</p>
+                            </div>
+                        </div>
+                        <button class="text-[#0A7E8C] font-semibold hover:text-[#0a6c78] transition-colors">Read Full Story →</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="bg-[#0A7E8C] text-white px-6 py-3 rounded-full hover:bg-[#0a6c78] transition-colors">View All Stories</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Gallery -->
+    <section id="gallery" class="py-20 bg-[#f8f9fa]">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#0A7E8C] mb-4 fade-in">Community Gallery</h2>
+            <p class="text-center text-[#5E4B3C] max-w-2xl mx-auto mb-12 fade-in">See the world through the lenses of our community of explorers</p>
+            
+            <div class="masonry-grid">
+                <!-- Gallery Item 1 -->
+                <div class="masonry-item zoom-in">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Mountain lake" class="w-full rounded-lg shadow-md mb-4">
+                </div>
+                
+                <!-- Gallery Item 2 -->
+                <div class="masonry-item zoom-in">
+                    <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Northern lights" class="w-full rounded-lg shadow-md mb-4">
+                </div>
+                
+                <!-- Gallery Item 3 -->
+                <div class="masonry-item zoom-in">
+                    <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Mountain peak" class="w-full rounded-lg shadow-md mb-4">
+                </div>
+                
+                <!-- Gallery Item 4 -->
+                <div class="masonry-item zoom-in">
+                    <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Lake view" class="w-full rounded-lg shadow-md mb-4">
+                </div>
+                
+                <!-- Gallery Item 5 -->
+                <div class="masonry-item zoom-in">
+                    <img src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Desert road" class="w-full rounded-lg shadow-md mb-4">
+                </div>
+                
+                <!-- Gallery Item 6 -->
+                <div class="masonry-item zoom-in">
+                    <img src="https://images.unsplash.com/photo-1464822759849-d165e9444e76?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Snowy mountains" class="w-full rounded-lg shadow-md mb-4">
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="bounce bg-[#EE9B00] text-white px-8 py-4 rounded-full shadow-lg hover:bg-[#d48c00] transition-colors">
+                    <i class="fas fa-camera mr-2"></i> Share Your Hidden Road
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#0A7E8C] text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">Hidden Roads</h3>
+                    <p class="mb-6 max-w-md">Discover the world's hidden gems and untouched destinations. Travel beyond the tourist trails and create unforgettable memories.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                            <i class="fab fa-pinterest"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Explore</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-[#E9D8A6] transition-colors">Destinations</a></li>
+                        <li><a href="#" class="hover:text-[#E9D8A6] transition-colors">Travel Guides</a></li>
+                        <li><a href="#" class="hover:text-[#E9D8A6] transition-colors">Travel Stories</a></li>
+                        <li><a href="#" class="hover:text-[#E9D8A6] transition-colors">Community</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Stay Updated</h4>
+                    <p class="mb-4">Subscribe to our newsletter for travel inspiration and exclusive offers.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg text-gray-800 w-full focus:outline-none">
+                        <button type="submit" class="bg-[#EE9B00] px-4 py-2 rounded-r-lg hover:bg-[#d48c00] transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/20 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2023 Hidden Roads. All rights reserved. | <a href="#" class="hover:text-[#E9D8A6] transition-colors">Privacy Policy</a> | <a href="#" class="hover:text-[#E9D8A6] transition-colors">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Chatbot -->
+    <div class="chatbot" id="chatbot-toggle">
+        <i class="fas fa-robot text-white text-2xl"></i>
+    </div>
+    
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">
+            <h3 class="font-bold">GuideGo - Your Travel Assistant</h3>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">
+                Hi! I'm GuideGo, your AI travel assistant. How can I help you discover hidden destinations today?
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input" placeholder="Ask me about destinations...">
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }, 1500);
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Chatbot functionality
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSend = document.getElementById('chatbot-send');
+
+        chatbotToggle.addEventListener('click', () => {
+            if (chatbotWindow.style.display === 'flex') {
+                chatbotWindow.style.display = 'none';
+            } else {
+                chatbotWindow.style.display = 'flex';
+            }
+        });
+
+        chatbotSend.addEventListener('click', sendMessage);
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const message = chatbotInput.value.trim();
+            if (message) {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('message', 'user-message');
+                userMessage.textContent = message;
+                chatbotMessages.appendChild(userMessage);
+                
+                // Clear input
+                chatbotInput.value = '';
+                
+                // Scroll to bottom
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                
+                // Simulate bot response after a delay
+                setTimeout(() => {
+                    const botMessage = document.createElement('div');
+                    botMessage.classList.add('message', 'bot-message');
+                    
+                    // Simple responses based on keywords
+                    if (message.toLowerCase().includes('beach')) {
+                        botMessage.textContent = "For hidden beaches, I'd recommend the remote islands of Palawan in the Philippines or the untouched shores of Mozambique's Quirimbas Archipelago.";
+                    } else if (message.toLowerCase().includes('mountain')) {
+                        botMessage.textContent = "If you're looking for mountain adventures, consider the Dolomites in Italy or the remote peaks of Kyrgyzstan's Tian Shan range.";
+                    } else if (message.toLowerCase().includes('culture')) {
+                        botMessage.textContent = "For authentic cultural experiences, I'd suggest visiting the ancient towns of Georgia or exploring the tribal regions of Papua New Guinea.";
+                    } else if (message.toLowerCase().includes('budget')) {
+                        botMessage.textContent = "For budget-friendly hidden gems, consider Albania, Bolivia, or Vietnam - all offer incredible experiences without breaking the bank.";
+                    } else {
+                        botMessage.textContent = "That's interesting! I'd love to help you find the perfect hidden destination. Could you tell me more about what you're looking for?";
+                    }
+                    
+                    chatbotMessages.appendChild(botMessage);
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                }, 1000);
+            }
+        }
+
+        // Surprise Me button functionality
+        document.querySelector('.surprise-button').addEventListener('click', function() {
+            const destinations = [
+                "Socotra Island, Yemen",
+                "Faroe Islands, Denmark",
+                "Zhangjiajie, China",
+                "Salar de Uyuni, Bolivia",
+                "Plitvice Lakes, Croatia",
+                "Trolltunga, Norway",
+                "Jiuzhaigou Valley, China",
+                "Svalbard, Norway",
+                "Lake Bled, Slovenia",
+                "Antelope Canyon, USA"
+            ];
+            
+            const randomDest = destinations[Math.floor(Math.random() * destinations.length)];
+            
+            // Create a popup with the random destination
+            const popup = document.createElement('div');
+            popup.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/50';
+            popup.innerHTML = `
+                <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center">
+                    <h3 class="text-2xl font-bold text-[#0A7E8C] mb-4">Your Hidden Destination!</h3>
+                    <p class="text-xl text-[#5E4B3C] mb-6">${randomDest}</p>
+                    <button class="bg-[#EE9B00] text-white px-6 py-2 rounded-full hover:bg-[#d48c00] transition-colors" id="close-popup">Explore This Destination</button>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            document.getElementById('close-popup').addEventListener('click', function() {
+                document.body.removeChild(popup);
+            });
+        });
+    </script>
+</body>
+</html>
